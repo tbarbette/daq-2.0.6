@@ -20,6 +20,7 @@
 #include <rte_memcpy.h>
 #include <rte_ring.h>
 #include <rte_prefetch.h>
+#include <rte_version.h>
 
 #define DAQ_DPDK_VERSION 2
 #define MAX_ARGS 64
@@ -484,8 +485,11 @@ static int dpdkring_daq_acquire(void *handle, int cnt, DAQ_Analysis_Func_t callb
 				burst_size = cnt - c;
 			
 			// Read RX ring
+#if RTE_VERSION >= RTE_VERSION_NUM(17,5,0,0)
+			const uint16_t nb_read = rte_ring_dequeue_burst(instance->rx_ring, (void *)rx_burst, burst_size, 0);
+#else
 			const uint16_t nb_read = rte_ring_dequeue_burst(instance->rx_ring, (void *)rx_burst, burst_size);
-
+#endif
 			if (unlikely(nb_read == 0))
 				continue;
 			
@@ -553,8 +557,11 @@ static int dpdkring_daq_acquire(void *handle, int cnt, DAQ_Analysis_Func_t callb
 					continue;
 send_packets:
 				; //empty statement to avoid compiler error "a label can only be part of a statement and a declaration is not a statement"
+#if RTE_VERSION >= RTE_VERSION_NUM(17,5,0,0)
+				const uint16_t nb_sent = rte_ring_enqueue_burst(instance->tx_ring_peer, (void *)&instance->tx_peer_burst[instance->tx_peer_start], burst_size, 0);
+#else
 				const uint16_t nb_sent = rte_ring_enqueue_burst(instance->tx_ring_peer, (void *)&instance->tx_peer_burst[instance->tx_peer_start], burst_size);
-				
+#endif
 				// If nothing has been sent then go to next instance (will try again after when back to current instance)
 				if (unlikely(nb_sent == 0))
 					continue;
