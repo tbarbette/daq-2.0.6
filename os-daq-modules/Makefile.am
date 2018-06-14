@@ -108,9 +108,7 @@ if BUILD_SHARED_MODULES
 endif
     libdaq_static_modules_la_SOURCES += daq_dpdk.c
     libdaq_static_modules_la_CFLAGS += -DBUILD_DPDK_MODULE -msse4
-endif
 
-if BUILD_DPDK_RING_MODULE
 if BUILD_SHARED_MODULES
     pkglib_LTLIBRARIES += daq_dpdkring.la
     daq_dpdkring_la_SOURCES = daq_dpdkring.c
