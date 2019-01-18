@@ -253,7 +253,7 @@ AC_ARG_ENABLE(dpdkring-module,
 if test "$enable_dpdkring_module" = yes; then
     AC_CHECK_HEADER([rte_config.h], [], [enable_dpdkring_module=no])
     if test "$enable_dpdkring_module" = yes; then
-        STATIC_LIBS="${STATIC_LIBS} -lsfbpf ${DPDK_LDFLAGS} -ldpdk -lpthread"
+        STATIC_LIBS="${STATIC_LIBS} -lsfbpf ${DPDK_LDFLAGS} -ldpdk -lpthread -lnuma"
         CFLAGS="${CFLAGS} -std=gnu99 -Wno-pedantic"
     fi
 fi
